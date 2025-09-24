@@ -2,11 +2,12 @@
 
 import type { SwitchOption } from "@/types/transwitch";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Paragraph } from "./typography";
+import { Paragraph } from "./Typography";
 import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { useSWRBusEtaApi } from "@/scripts/swrHelper";
 import { getCompanyColor } from "@/scripts/utils/styles";
-import { EtaDisplay } from "./etaDisplay";
+import { EtaDisplay } from "./EtaDisplay";
+import { RouteChip } from "./RouteChip";
 
 interface ISwitchOptionCardProps {
   option: SwitchOption;
@@ -38,13 +39,7 @@ export function SwitchOptionCard(props: ISwitchOptionCardProps) {
             key={`segment-${index}`}
             className="mb-2 flex gap-3 items-center"
           >
-            <div
-              className={`${getCompanyColor(
-                route.co[0]
-              )} font-bold w-12 text-center py-0.5 rounded-sm min-h-0`}
-            >
-              {route.route}
-            </div>
+            <RouteChip {...route} />
             <div className="flex flex-col flex-1">
               {[segment.fromSeq, segment.toSeq].map((seq, i) => (
                 <div key={`seq-${i}`} className="flex justify-between">

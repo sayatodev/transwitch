@@ -1,14 +1,26 @@
+import { Heading1, Paragraph } from "@/components/Typography";
+
 export default function Home() {
   return (
-    <div>
-      <h1>TranSwitch</h1>
-      <h2>This project is still under active development!</h2>
-      <p>
-        Checkout the GitHub repo <a className="text-zinc-600" href="https://github.com/sayatodev/transwitch">here</a>.
-      </p>
-      <p>
-        Or check out the hidden page <a className="text-zinc-600" href="/switch/0/view">here</a>.
-      </p>
+    <div className="flex flex-col gap-4 justify-center text-center">
+      <Heading1>TranSwitch</Heading1>
+      <Paragraph>This project is still under active development!</Paragraph>
+      <Paragraph>
+        <span>Checkout the GitHub repo </span>
+        <a
+          className="text-zinc-600"
+          href="https://github.com/sayatodev/transwitch"
+        >
+          here
+        </a>
+        <span>.</span>
+        <br />
+        <span>Or check out the hidden page </span>
+        <a className="text-zinc-600" href="/switch/0/view">
+          here
+        </a>
+        <span>.</span>
+      </Paragraph>
     </div>
   );
 }

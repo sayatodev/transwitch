@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { WithData } from "@/components/withData";
+import { WithData } from "@/components/WithData";
 
 export const metadata: Metadata = {
   title: "TranSwitch",
@@ -14,8 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html className="min-h-full bg-zinc-200" lang="en">
-      <body className="h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
-        <WithData>{children}</WithData>
+      <body>
+        <div className="h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
+          <WithData>{children}</WithData>
+        </div>
       </body>
     </html>
   );

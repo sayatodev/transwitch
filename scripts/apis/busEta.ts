@@ -62,6 +62,19 @@ export class BusEtaApi {
     return this.etaDb.routeList[routeId];
   }
 
+  tryGetRoute(routeId: string): RouteListEntry | null {
+    if (!this.isInitialized()) {
+      throw new Error("BusEtaApi not initialized");
+    }
+
+    const route = this.etaDb.routeList[routeId];
+    if (!route) {
+      return null;
+    }
+
+    return route;
+  }
+
   async getEta(
     routeResolvable: string | RouteListEntry,
     stopSeq: number
@@ -118,11 +131,22 @@ export class BusEtaApi {
   }
 
   getRouteStopNameBySeq(
-    route: RouteListEntry,
+    routeResolvable: string | RouteListEntry,
     stopSeq: number,
     language: "en" | "zh",
     company: Company
   ): string {
+    if (!this.isInitialized()) {
+      throw new Error("BusEtaApi not initialized");
+    }
+
+    let route: RouteListEntry;
+    if (typeof routeResolvable === "string") {
+      route = this.getRoute(routeResolvable);
+    } else {
+      route = routeResolvable;
+    }
+
     const stopId = this.getRouteStopId(route, stopSeq, company);
     if (language == "en") {
       if (

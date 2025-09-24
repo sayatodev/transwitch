@@ -3,7 +3,7 @@ import { Company, EtaDb, RouteListEntry } from "hk-bus-eta";
 
 export type RouteSearchOptions = {
   value: string;
-  companyFilter: Company[] | null;
+  companyFilter?: Company[];
 };
 
 export type StopName = EtaDb["stopList"][number]["name"];
