@@ -19,4 +19,4 @@ export type RouteSegment = {
 export type SegmentSetter = <HasIndex extends "True" | "False">(
   segment: HasIndex extends "True" ? RouteSegment | null : RouteSegment,
   index: HasIndex extends "True" ? number : undefined
-) => void;
+) => boolean;

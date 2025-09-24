@@ -16,7 +16,11 @@ export class BusEtaApi {
   }
 
   async init(): Promise<BusEtaApi> {
+    if (this.isInitialized()) {
+      return this;
+    }
     this.etaDb = await fetchEtaDb();
+    console.log("BusEtaApi initialized", this.etaDb);
     return this;
   }
 

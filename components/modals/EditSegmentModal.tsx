@@ -14,6 +14,7 @@ import { RouteSegment, SegmentSetter } from "@/types/transwitch";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { RouteInput } from "../inputs/RouteInput";
 
 interface EditSegmentModalProps {
   className?: string;
@@ -27,9 +28,10 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
   const { className, combinationName, segmentIndex, segment, setSegment } =
     props;
   const [formData, setFormData] = useState({ ...segment });
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" type="button">
           <Pencil className={className} />
@@ -42,11 +44,8 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
           </DialogTitle>
         </DialogHeader>
         <Label className="mt-4">Route</Label>
-        <Input
-          value={formData.routeId}
-          onChange={(e) => {
-            setFormData({ ...formData, routeId: e.target.value });
-          }}
+        <RouteInput
+          onChange={(value) => setFormData({ ...formData, routeId: value })}
         />
         <Label className="mt-4">From Stop number</Label>
         <Input
@@ -80,16 +79,15 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
           }}
         />
         <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              onClick={() => {
-                setSegment(formData, segmentIndex);
-              }}
-            >
-              Save
-            </Button>
-          </DialogClose>
+          <Button
+            type="button"
+            onClick={() => {
+              const success = setSegment(formData, segmentIndex);
+              if (success) setIsOpen(false);
+            }}
+          >
+            Save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

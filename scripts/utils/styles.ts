@@ -8,7 +8,7 @@ export function getCompanyColor(company: Company): string {
     case "nlb":
       return "bg-[#00B04F] text-white";
     case "ctb":
-      return "bg-[#0080FF] text-white";
+      return "bg-[#ffe83a] text-gray-800";
     case "lrtfeeder":
       return "bg-[#000000] text-black";
     case "gmb":

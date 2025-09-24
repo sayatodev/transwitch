@@ -134,11 +134,30 @@ function CombinationFormCard({
   if (isLoading || !busEtaApi) return <div>...</div>;
   if (error) return <div>Failed to load</div>;
 
-  const handleNewSegment = (segment: RouteSegment, index?: number) => {
+  const handleNewSegment = (segment: RouteSegment, index?: number): boolean => {
+    const route = busEtaApi.getRoute(segment.routeId);
+
+    /* validations */
+    if (
+      segment.fromSeq >= route.stops[route.co[0]].length ||
+      segment.toSeq >= route.stops[route.co[0]].length
+    ) {
+      alert(
+        `From Stop number exceeds the number of stops in route ${
+          route.route
+        } (${route.stops[route.co[0]].length})`
+      );
+      return false;
+    }
+    if (segment.fromSeq >= segment.toSeq) {
+      alert("From Stop number must be less than To Stop number");
+      return false;
+    }
+
     const parseResult = SegmentSchema.safeParse(segment);
     if (!parseResult.success) {
       alert("Validation failed: " + JSON.stringify(parseResult.error.issues));
-      return;
+      return false;
     }
 
     const newSegments = [...combination.segments];
@@ -148,20 +167,22 @@ function CombinationFormCard({
       newSegments.push(segment);
     }
     setCombination({ ...combination, segments: newSegments });
+    return true;
   };
 
-  const deleteSegment = (index: number) => {
+  const deleteSegment = (index: number): boolean => {
     const newSegments = combination.segments.filter((_, i) => i !== index);
     setCombination({ ...combination, segments: newSegments });
+    return true;
   };
 
-  const setSegment: SegmentSetter = (segment, index) => {
+  const setSegment: SegmentSetter = (segment, index): boolean => {
     if (segment === null) {
       if (index === undefined)
         throw new Error("Index is required to delete segment");
-      deleteSegment(index);
+      return deleteSegment(index);
     } else {
-      handleNewSegment(segment, index);
+      return handleNewSegment(segment, index);
     }
   };
 
