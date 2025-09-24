@@ -58,7 +58,7 @@ export function SwitchOptionCard(props: ISwitchOptionCardProps) {
             className="[&:not(:last-child)]:pb-3 [&:not(:first-child)]:pt-3 flex gap-3 items-center [&:not(:last-child)]:border-b-1"
           >
             <RouteChip {...route} />
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 min-w-0">
               {[segment.fromSeq, segment.toSeq].map((seq, i) => (
                 <EtaDisplay
                   key={`seq-${i}`}

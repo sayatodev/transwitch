@@ -30,9 +30,12 @@ export function EtaDisplay(props: IEtaDisplayProps) {
       </div>
     );
   console.log("etas", props.route, etas);
+
   return (
-    <div className="flex flex-wrap gap-1 [&:not(:last-child)]:mb-4 leading-4">
-      <div className="flex-1 whitespace-nowrap">{props.stopName}</div>
+    <div className="flex flex-wrap gap-1 leading-6 min-w-0 overflow-hidden">
+      <div className="flex-1 whitespace-nowrap w-full min-w-0 overflow-hidden text-ellipsis">
+        {props.stopName}
+      </div>
       {etas && etas.length ? (
         etas.map((eta, index) => (
           <div key={`eta-text-${index}`} className="text-end ml-auto">
