@@ -22,23 +22,24 @@ export function SwitchOptionCard(props: ISwitchOptionCardProps) {
   const { option } = props;
 
   if (error) return <div>failed to load</div>;
-  if (isLoading || !busEtaApi) return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-32" />
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-16" />
-            <Skeleton className="h-8 w-16" />
+  if (isLoading || !busEtaApi)
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-32" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="flex gap-2">
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-8 w-16" />
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
 
   const segments = option.segments.map((sgmt) => ({
     segment: sgmt,
@@ -54,24 +55,22 @@ export function SwitchOptionCard(props: ISwitchOptionCardProps) {
         {segments.map(({ route, segment }, index) => (
           <div
             key={`segment-${index}`}
-            className="mb-2 flex gap-3 items-center"
+            className="[&:not(:last-child)]:pb-3 [&:not(:first-child)]:pt-3 flex gap-3 items-center [&:not(:last-child)]:border-b-1"
           >
             <RouteChip {...route} />
             <div className="flex flex-col flex-1">
               {[segment.fromSeq, segment.toSeq].map((seq, i) => (
-                <div key={`seq-${i}`} className="flex justify-between">
-                  <div>
-                    {busEtaApi.getRouteStopNameBySeq(
-                      route,
-                      seq,
-                      "en",
-                      route.co[0]
-                    )}
-                  </div>
-                  <div className="flex-1 justify-end flex gap-2">
-                    <EtaDisplay route={route} stopSeq={seq} />
-                  </div>
-                </div>
+                <EtaDisplay
+                  key={`seq-${i}`}
+                  stopName={busEtaApi.getRouteStopNameBySeq(
+                    route,
+                    seq,
+                    "en",
+                    route.co[0]
+                  )}
+                  route={route}
+                  stopSeq={seq}
+                />
               ))}
             </div>
           </div>

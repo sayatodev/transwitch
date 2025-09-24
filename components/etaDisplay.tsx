@@ -6,6 +6,7 @@ import { Skeleton } from "./ui/skeleton";
 
 interface IEtaDisplayProps {
   route: RouteListEntry;
+  stopName?: string;
   stopSeq: number;
 }
 
@@ -17,20 +18,32 @@ export function EtaDisplay(props: IEtaDisplayProps) {
     props.stopSeq
   );
 
-  if (error) return <div>failed to load</div>;
-  if (isLoading || !etas) return (
-    <div className="space-y-1">
-      <Skeleton className="h-4 w-12" />
-      <Skeleton className="h-4 w-10" />
-    </div>
-  );
+  if (error) {
+    console.error(error);
+    return <div>failed to load</div>;
+  }
+  if (isLoading)
+    return (
+      <div className="space-y-1">
+        <Skeleton className="h-4 w-12" />
+        <Skeleton className="h-4 w-10" />
+      </div>
+    );
+  console.log("etas", props.route, etas);
   return (
-    <>
-      {etas.map((eta, index) => (
-        <div key={`eta-text-${index}`}>
-          {eta.eta ? toHHMM(new Date(eta.eta)) : "No ETA"}
-        </div>
-      ))}
-    </>
+    <div className="flex flex-wrap gap-1 [&:not(:last-child)]:mb-4 leading-4">
+      <div className="flex-1 whitespace-nowrap">{props.stopName}</div>
+      {etas && etas.length ? (
+        etas.map((eta, index) => (
+          <div key={`eta-text-${index}`} className="text-end ml-auto">
+            {eta.eta && eta.eta.length
+              ? toHHMM(new Date(eta.eta))
+              : eta.remark.en || "N/A"}
+          </div>
+        ))
+      ) : (
+        <div className="text-end ml-auto">N/A</div>
+      )}
+    </div>
   );
 }
