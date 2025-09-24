@@ -2,6 +2,7 @@ import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { useSWRBusEtaApi } from "@/scripts/swrHelper";
 import { toHHMM } from "@/scripts/utils/strings";
 import { RouteListEntry } from "hk-bus-eta";
+import { Skeleton } from "./ui/skeleton";
 
 interface IEtaDisplayProps {
   route: RouteListEntry;
@@ -17,7 +18,12 @@ export function EtaDisplay(props: IEtaDisplayProps) {
   );
 
   if (error) return <div>failed to load</div>;
-  if (isLoading || !etas) return <div>loading...</div>;
+  if (isLoading || !etas) return (
+    <div className="space-y-1">
+      <Skeleton className="h-4 w-12" />
+      <Skeleton className="h-4 w-10" />
+    </div>
+  );
   return (
     <>
       {etas.map((eta, index) => (

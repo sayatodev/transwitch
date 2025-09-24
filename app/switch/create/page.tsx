@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BusEtaApi } from "@/scripts/apis/busEta";
 import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import {
@@ -131,7 +132,15 @@ function CombinationFormCard({
     useBusEtaApi()
   );
 
-  if (isLoading || !busEtaApi) return <div>...</div>;
+  if (isLoading || !busEtaApi) return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-48" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+    </div>
+  );
   if (error) return <div>Failed to load</div>;
 
   const handleNewSegment = (segment: RouteSegment, index?: number): boolean => {

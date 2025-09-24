@@ -6,6 +6,7 @@ import {
 } from "../customUi/VirtualizedCombobox";
 import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { RouteListEntry } from "hk-bus-eta";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type RouteInputProps = {
   onChange: (value: string) => void;
@@ -17,7 +18,7 @@ export function RouteInput({ onChange }: RouteInputProps) {
     useBusEtaApi()
   );
   if (error) return <div>failed to load</div>;
-  if (isLoading || !busEtaApi) return <div>loading...</div>;
+  if (isLoading || !busEtaApi) return <Skeleton className="h-10 w-full" />;
 
   const options = Object.entries(
     busEtaApi.etaDb?.routeList ?? {}
