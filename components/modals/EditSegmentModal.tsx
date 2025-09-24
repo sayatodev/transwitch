@@ -10,23 +10,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { RouteSegment } from "@/types/transwitch";
+import { RouteSegment, SegmentSetter } from "@/types/transwitch";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { useState } from "react";
 
 interface EditSegmentModalProps {
   className?: string;
   combinationName: string;
   segmentIndex: number;
   segment: RouteSegment;
-  setSegment: (segment: RouteSegment) => void;
+  setSegment: SegmentSetter;
 }
 
 export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
   const { className, combinationName, segmentIndex, segment, setSegment } =
     props;
+  const [formData, setFormData] = useState({ ...segment });
 
-  const formData = { ...segment };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -44,37 +45,38 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
         <Input
           value={formData.routeId}
           onChange={(e) => {
-            setSegment({ ...formData, routeId: e.target.value });
+            setFormData({ ...formData, routeId: e.target.value });
           }}
         />
-        <Label className="mt-4">From Stop Seq</Label>
+        <Label className="mt-4">From Stop number</Label>
         <Input
           type="number"
-          value={formData.fromSeq}
+          defaultValue={formData.fromSeq + 1}
           onChange={(e) => {
-            setSegment({ ...formData, fromSeq: Number(e.target.value) });
+            setFormData({ ...formData, fromSeq: Number(e.target.value) - 1 });
           }}
         />
-        <Label className="mt-4">To Stop Seq</Label>
+        <Label className="mt-4">To Stop number</Label>
         <Input
           type="number"
-          value={formData.toSeq}
+          defaultValue={formData.toSeq + 1}
+          min={1}
           onChange={(e) => {
-            setSegment({ ...formData, toSeq: Number(e.target.value) });
+            setFormData({ ...formData, toSeq: Number(e.target.value) - 1 });
           }}
         />
-        <Paragraph className="mb-2">
+        <div className="mb-2">
           <Label className="mt-4">Base Duration (minutes)</Label>
-          <div className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600">
             Estimated time taken for this segment. This helps us identify the
             arrival time.
-          </div>
-        </Paragraph>
+          </p>
+        </div>
         <Input
           type="number"
           value={formData.baseDuration}
           onChange={(e) => {
-            setSegment({ ...formData, baseDuration: Number(e.target.value) });
+            setFormData({ ...formData, baseDuration: Number(e.target.value) });
           }}
         />
         <DialogFooter>
@@ -82,7 +84,7 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
             <Button
               type="button"
               onClick={() => {
-                setSegment(formData);
+                setSegment(formData, segmentIndex);
               }}
             >
               Save

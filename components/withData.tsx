@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BusEtaApi } from "@/scripts/apis/busEta";
 import { BusEtaApiProvider } from "@/scripts/contexts/busEtaApi";
-import { UserSwitchesProvider } from "@/scripts/contexts/userSwitches";
+import {
+  loadUserSwitches,
+  saveUserSwitches,
+  UserSwitchesProvider,
+} from "@/scripts/contexts/userSwitches";
 import { Switch } from "@/types/transwitch";
 import { TEMPLATE_UserSwitches } from "@/scripts/contexts/userSwitches";
 
@@ -13,11 +17,19 @@ interface WithDataProps {
 
 export function WithData({ children }: WithDataProps) {
   const [busEtaApi] = useState(() => new BusEtaApi());
-  const [userSwitches] = useState<Switch[]>(() => TEMPLATE_UserSwitches);
+  const [userSwitches, setUserSwitches] = useState<Switch[]>([]);
+
+  useEffect(() => {
+    const switches = loadUserSwitches();
+    setUserSwitches(switches);
+  }, []);
 
   return (
     <BusEtaApiProvider api={busEtaApi}>
-      <UserSwitchesProvider switches={userSwitches}>
+      <UserSwitchesProvider
+        switches={userSwitches}
+        setSwitches={setUserSwitches}
+      >
         {children}
       </UserSwitchesProvider>
     </BusEtaApiProvider>

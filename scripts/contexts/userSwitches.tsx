@@ -1,7 +1,20 @@
-import { Switch } from "@/types/transwitch";
-import { createContext, useContext } from "react";
+import type { Switch } from "@/types/transwitch";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import { z } from "zod";
 
-export const UserSwitchesContext = createContext<Switch[] | null>(null);
+type UserSwitchesContextType = {
+  switches: Switch[];
+  setSwitches: Dispatch<SetStateAction<Switch[]>>;
+};
+
+export const UserSwitchesContext =
+  createContext<UserSwitchesContextType | null>(null);
 export function useUserSwitches() {
   const context = useContext(UserSwitchesContext);
   if (!context) {
@@ -12,15 +25,73 @@ export function useUserSwitches() {
   return context;
 }
 
+/* Zod schema for validation */
+export const SegmentSchema: z.ZodType<
+  Switch["combinations"][number]["segments"][number]
+> = z.object({
+  routeId: z.string(),
+  fromSeq: z.int().min(0),
+  toSeq: z.int().min(0),
+  baseDuration: z.number().min(0),
+});
+
+export const CombinationSchema: z.ZodType<Switch["combinations"][number]> =
+  z.object({
+    name: z.string(),
+    segments: z.array(SegmentSchema),
+  });
+
+export const SwitchSchema: z.ZodType<Switch> = z.object({
+  id: z.string(),
+  name: z.string(),
+  combinations: z.array(CombinationSchema),
+});
+
+const SwitchArraySchema = z.array(SwitchSchema);
+
+export function saveUserSwitches(switches: Switch[]) {
+  localStorage.setItem(
+    "userSwitches",
+    Buffer.from(JSON.stringify(switches)).toString("base64")
+  );
+}
+
+export function loadUserSwitches(): Switch[] {
+  const item = localStorage.getItem("userSwitches");
+  if (!item) return [];
+  const json = Buffer.from(item, "base64").toString();
+  const data = JSON.parse(json);
+  const result = SwitchArraySchema.safeParse(data);
+  if (result.success) {
+    return result.data;
+  } else {
+    console.error(
+      "Failed to load user switches from localStorage",
+      result.error
+    );
+    return [];
+  }
+}
+
 export function UserSwitchesProvider({
   children,
   switches,
+  setSwitches,
 }: {
   children: React.ReactNode;
   switches: Switch[];
+  setSwitches: Dispatch<SetStateAction<Switch[]>>;
 }) {
+  const onSetSwitch = (param: Switch[] | ((prev: Switch[]) => Switch[])) => {
+    setSwitches(param);
+    const newSwitches = typeof param === "function" ? param(switches) : param;
+    saveUserSwitches(newSwitches);
+  };
+
   return (
-    <UserSwitchesContext.Provider value={switches}>
+    <UserSwitchesContext.Provider
+      value={{ switches, setSwitches: onSetSwitch }}
+    >
       {children}
     </UserSwitchesContext.Provider>
   );

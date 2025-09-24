@@ -2,17 +2,22 @@
 
 import { SwitchOptionCard } from "@/components/SwitchOptionCard";
 import { Heading2 } from "@/components/Typography";
-import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { useUserSwitches } from "@/scripts/contexts/userSwitches";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
+import SwitchNotFound from "@/app/switch/not-found";
 
 export default function SwitchView() {
-  const userSwitches = useUserSwitches();
-  const targetSwitch = userSwitches[0]; // For demonstration, using the first switch
+  const { switches } = useUserSwitches();
+  const { id } = useParams();
+  console.log(switches);
+  const targetSwitch = switches.find((s) => s.id === id);
 
   useEffect(() => {
-    console.log("UserSwitches:", userSwitches);
-  }, [userSwitches]);
+    console.log("UserSwitches:", switches);
+  }, [switches]);
+
+  if (!targetSwitch) return <SwitchNotFound />;
 
   return (
     <div>
