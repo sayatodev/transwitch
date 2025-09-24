@@ -16,7 +16,7 @@ export default function Home() {
         <span>.</span>
         <br />
         <span>Or check out the hidden page </span>
-        <a className="text-zinc-600" href="/switch/create">
+        <a className="text-zinc-600" href="/switch/all">
           here
         </a>
         <span>.</span>
