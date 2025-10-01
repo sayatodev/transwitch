@@ -4,19 +4,16 @@ import { SwitchOptionCard } from "@/components/SwitchOptionCard";
 import { Heading2 } from "@/components/Typography";
 import { useUserSwitches } from "@/scripts/contexts/userSwitches";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
 import SwitchNotFound from "@/app/switch/not-found";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SwitchView() {
   const { switches } = useUserSwitches();
+  if (!switches) return <Skeleton className="h-6 w-32" />;
+
   const { id } = useParams();
-  console.log(switches);
+
   const targetSwitch = switches.find((s) => s.id === id);
-
-  useEffect(() => {
-    console.log("UserSwitches:", switches);
-  }, [switches]);
-
   if (!targetSwitch) return <SwitchNotFound />;
 
   return (

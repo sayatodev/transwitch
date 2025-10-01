@@ -24,8 +24,10 @@ export function EtaDisplay(props: IEtaDisplayProps) {
   }
   if (isLoading)
     return (
-      <div className="space-y-1">
-        <Skeleton className="h-4 w-12" />
+      <div className="flex space-y-1">
+        <div className="flex-1 whitespace-nowrap w-full min-w-0 overflow-hidden text-ellipsis">
+          {props.stopName}
+        </div>
         <Skeleton className="h-4 w-10" />
       </div>
     );
