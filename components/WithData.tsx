@@ -5,24 +5,27 @@ import { BusEtaApi } from "@/scripts/apis/busEta";
 import { BusEtaApiProvider } from "@/scripts/contexts/busEtaApi";
 import {
   loadUserSwitches,
-  saveUserSwitches,
   UserSwitchesProvider,
 } from "@/scripts/contexts/userSwitches";
 import { Switch } from "@/types/transwitch";
-import { TEMPLATE_UserSwitches } from "@/scripts/contexts/userSwitches";
+import type { EtaDb } from "hk-bus-eta";
 
 interface WithDataProps {
+  etaDb: EtaDb;
   children: React.ReactNode;
 }
 
-export function WithData({ children }: WithDataProps) {
-  const [busEtaApi] = useState(() => new BusEtaApi());
+const busEtaApi: BusEtaApi = new BusEtaApi<"uninitialized">();
+
+export function WithData({ etaDb, children }: WithDataProps) {
   const [userSwitches, setUserSwitches] = useState<Switch[]>([]);
 
   useEffect(() => {
     const switches = loadUserSwitches();
     setUserSwitches(switches);
   }, []);
+
+  busEtaApi.init(etaDb);
 
   return (
     <BusEtaApiProvider api={busEtaApi}>

@@ -13,16 +13,9 @@ type RouteInputProps = {
 };
 
 export function RouteInput({ onChange }: RouteInputProps) {
-  const { busEtaApi, error, isLoading } = useSWRBusEtaApi(
-    "initDb",
-    useBusEtaApi()
-  );
-  if (error) return <div>failed to load</div>;
-  if (isLoading || !busEtaApi) return <Skeleton className="h-10 w-full" />;
-
-  const options = Object.entries(
-    busEtaApi.etaDb?.routeList ?? {}
-  ).map<ComboboxCommandOption>(([id, route]: [string, RouteListEntry]) => {
+  const busEtaApi = useBusEtaApi();
+  
+  const options = busEtaApi.getRouteEntries().map<ComboboxCommandOption>(([id, route]: [string, RouteListEntry]) => {
     return {
       value: id,
       label: `${route.route} - ${route.dest.en} ${

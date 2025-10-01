@@ -9,15 +9,11 @@ export const jsonFetcher: Fetcher = (
 
 // Helpers for BusEtaApi with SWR
 
-type BusEtaApiFetchKey = "initDb" | "getEta";
-type BusEtaApiFetchArgs<K extends BusEtaApiFetchKey> = K extends "initDb"
-  ? Parameters<typeof BusEtaApi.prototype.init>
-  : K extends "getEta"
+type BusEtaApiFetchKey = "getEta";
+type BusEtaApiFetchArgs<K extends BusEtaApiFetchKey> = K extends "getEta"
   ? Parameters<typeof BusEtaApi.prototype.getEta>
   : never;
-type BusEtaApiReturnType<K extends BusEtaApiFetchKey> = K extends "initDb"
-  ? ReturnType<typeof BusEtaApi.prototype.init>
-  : K extends "getEta"
+type BusEtaApiReturnType<K extends BusEtaApiFetchKey> = K extends "getEta"
   ? ReturnType<typeof BusEtaApi.prototype.getEta>
   : never;
 
@@ -26,14 +22,10 @@ type BusEtaApiSWRFetcher<K extends BusEtaApiFetchKey> = Fetcher<
   BusEtaApiSWRFetcherArgs<K>
 >;
 type BusEtaApiSWRFetcherArgs<K extends BusEtaApiFetchKey> = [
-  BusEtaApi,
+  BusEtaApi<"initialized">,
   ...BusEtaApiFetchArgs<K>
 ];
 
-export const busEtaApiInitFetcher: BusEtaApiSWRFetcher<"initDb"> = ([api]) => {
-  if (api.isInitialized()) return Promise.resolve(api);
-  return api.init();
-};
 export const busEtaApiEtasFetcher: BusEtaApiSWRFetcher<"getEta"> = ([
   api,
   ...args
@@ -44,33 +36,23 @@ type SWRBusEtaApiReturnBase = { error: Error | null; isLoading: boolean };
 
 /* signature overloads */
 export function useSWRBusEtaApi(
-  key: "initDb",
-  api: BusEtaApi,
-  ...args: BusEtaApiFetchArgs<"initDb">
-): { busEtaApi: BusEtaApi | null } & SWRBusEtaApiReturnBase;
-export function useSWRBusEtaApi(
   key: "getEta",
-  api: BusEtaApi,
+  api: BusEtaApi<"initialized">,
   ...args: BusEtaApiFetchArgs<"getEta">
 ): { etas: Eta[] | null } & SWRBusEtaApiReturnBase;
 
 /* function body */
 export function useSWRBusEtaApi<K extends BusEtaApiFetchKey>(
   key: K,
-  api: BusEtaApi,
+  api: BusEtaApi<"initialized">,
   ...args: BusEtaApiFetchArgs<K>
 ): any & SWRBusEtaApiReturnBase {
   let fetcher: BusEtaApiSWRFetcher<K> | null = null;
-  const config: SWRConfiguration = {}
+  const config: SWRConfiguration = {};
   switch (key) {
-    case "initDb":
-      fetcher = busEtaApiInitFetcher as BusEtaApiSWRFetcher<K>;
-      config.revalidateIfStale = false;
-      config.revalidateOnFocus = false;
-      config.revalidateOnReconnect = false;
-      break;
     case "getEta":
       fetcher = busEtaApiEtasFetcher as BusEtaApiSWRFetcher<K>;
+      config.focusThrottleInterval = 30000; // 30s
       break;
     default:
       fetcher = null;
@@ -87,8 +69,6 @@ export function useSWRBusEtaApi<K extends BusEtaApiFetchKey>(
     isLoading,
   };
   switch (key) {
-    case "initDb":
-      return { busEtaApi: data, ...resultsBase };
     case "getEta":
       return { etas: data, ...resultsBase };
     default:

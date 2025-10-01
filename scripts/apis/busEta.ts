@@ -1,27 +1,24 @@
 import { fetchEtaDb, fetchEtas } from "hk-bus-eta";
 import type { Company, Eta, EtaDb, RouteListEntry } from "hk-bus-eta";
-import type { RouteSearchOptions, StopName } from "./busEta_types";
+import type { RouteSearchOptions } from "./busEta_types";
 import { toNormalCase } from "../utils/strings";
 
-export class BusEtaApi {
-  etaDb: EtaDb | null = null;
+export class BusEtaApi<
+  initialized extends "initialized" | "uninitialized" = "uninitialized"
+> {
+  private etaDb: initialized extends "initialized" ? EtaDb : null;
 
-  constructor(onInit?: (api: BusEtaApi) => void) {
-    this.init().then(onInit || (() => {}));
-    return;
+  constructor() {
+    const value = null as initialized extends "initialized" ? EtaDb : null;
+    this.etaDb = value;
   }
 
-  isInitialized(): this is { etaDb: EtaDb } {
+  isInitialized(): this is BusEtaApi<"initialized"> {
     return this.etaDb !== null;
   }
 
-  async init(): Promise<BusEtaApi> {
-    if (this.isInitialized()) {
-      return this;
-    }
-    this.etaDb = await fetchEtaDb();
-    console.log("BusEtaApi initialized", this.etaDb);
-    return this;
+  init(etaDb: EtaDb): asserts this is BusEtaApi<"initialized"> {
+    (this as BusEtaApi<any>).etaDb = etaDb;
   }
 
   searchRoutes(options: RouteSearchOptions): RouteListEntry[] {
@@ -37,6 +34,13 @@ export class BusEtaApi {
     });
 
     return matchedRoutes;
+  }
+
+  getRouteEntries(): [string, RouteListEntry][] {
+    if (!this.isInitialized()) {
+      throw new Error("BusEtaApi not initialized");
+    }
+    return Object.entries(this.etaDb?.routeList);
   }
 
   searchRouteIds(options: RouteSearchOptions): string[] {

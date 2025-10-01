@@ -1,7 +1,9 @@
 import { createContext, useContext } from "react";
 import { BusEtaApi } from "../apis/busEta";
 
-export const BusEtaApiContext = createContext<BusEtaApi | null>(null);
+export const BusEtaApiContext = createContext<BusEtaApi<"initialized"> | null>(
+  null
+);
 export function useBusEtaApi() {
   const context = useContext(BusEtaApiContext);
   if (!context) {
@@ -15,7 +17,7 @@ export function BusEtaApiProvider({
   api,
 }: {
   children: React.ReactNode;
-  api: BusEtaApi;
+  api: BusEtaApi<"initialized">;
 }) {
   return (
     <BusEtaApiContext.Provider value={api}>

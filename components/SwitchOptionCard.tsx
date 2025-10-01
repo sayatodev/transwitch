@@ -14,32 +14,9 @@ interface ISwitchOptionCardProps {
   option: SwitchOption;
 }
 export function SwitchOptionCard(props: ISwitchOptionCardProps) {
-  const { busEtaApi, error, isLoading } = useSWRBusEtaApi(
-    "initDb",
-    useBusEtaApi()
-  );
+  const busEtaApi = useBusEtaApi();
 
   const { option } = props;
-
-  if (error) return <div>failed to load</div>;
-  if (isLoading || !busEtaApi)
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-32" />
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <div className="flex gap-2">
-              <Skeleton className="h-8 w-16" />
-              <Skeleton className="h-8 w-16" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
 
   const segments = option.segments.map((sgmt) => ({
     segment: sgmt,

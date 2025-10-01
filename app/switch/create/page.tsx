@@ -127,21 +127,7 @@ function CombinationFormCard({
   combination: CombinationFormData;
   setCombination: (combination: CombinationFormData) => void;
 }) {
-  const { busEtaApi, error, isLoading } = useSWRBusEtaApi(
-    "initDb",
-    useBusEtaApi()
-  );
-
-  if (isLoading || !busEtaApi) return (
-    <div className="space-y-4">
-      <Skeleton className="h-8 w-48" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-      </div>
-    </div>
-  );
-  if (error) return <div>Failed to load</div>;
+  const busEtaApi = useBusEtaApi();
 
   const handleNewSegment = (segment: RouteSegment, index?: number): boolean => {
     const route = busEtaApi.getRoute(segment.routeId);
@@ -246,7 +232,7 @@ function SegmentInputCard({
   index: number;
   segment: RouteSegment;
   setSegment: SegmentSetter;
-  busEtaApi: BusEtaApi;
+  busEtaApi: BusEtaApi<"initialized">;
 }) {
   const route = busEtaApi.getRoute(segment.routeId);
   return (
