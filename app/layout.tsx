@@ -30,7 +30,7 @@ export default async function RootLayout({
     return (
       <html className="min-h-full bg-zinc-200" lang="en">
         <body>
-          <div className="h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
+          <div className="min-h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
             <WithData etaDb={etaDb}>{children}</WithData>
           </div>
         </body>
@@ -40,7 +40,7 @@ export default async function RootLayout({
     return (
       <html className="min-h-full bg-zinc-200" lang="en">
         <body>
-          <div className="h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
+          <div className="min-h-[100vh] max-w-[70vh] mx-auto p-4 bg-zinc-100 shadow-md">
             <div className="text-gray-800">
               Failed to initialize bus route/fare database. Please try again
               later.

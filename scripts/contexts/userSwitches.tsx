@@ -11,6 +11,8 @@ import { z } from "zod";
 type UserSwitchesContextType = {
   switches: Switch[];
   setSwitches: Dispatch<SetStateAction<Switch[]>>;
+  updateSwitch: (id: string, updatedSwitch: Switch) => void;
+  deleteSwitch: (id: string) => void;
 };
 
 export const UserSwitchesContext =
@@ -88,9 +90,23 @@ export function UserSwitchesProvider({
     saveUserSwitches(newSwitches);
   };
 
+  const updateSwitch = (id: string, updatedSwitch: Switch) => {
+    const newSwitches = switches.map((s) => 
+      s.id === id ? updatedSwitch : s
+    );
+    setSwitches(newSwitches);
+    saveUserSwitches(newSwitches);
+  };
+
+  const deleteSwitch = (id: string) => {
+    const newSwitches = switches.filter((s) => s.id !== id);
+    setSwitches(newSwitches);
+    saveUserSwitches(newSwitches);
+  };
+
   return (
     <UserSwitchesContext.Provider
-      value={{ switches, setSwitches: onSetSwitch }}
+      value={{ switches, setSwitches: onSetSwitch, updateSwitch, deleteSwitch }}
     >
       {children}
     </UserSwitchesContext.Provider>
