@@ -118,28 +118,23 @@ export class SwitchOptionController {
     const fromTarget = fromEtas.findIndex((eta) => eta.time.isAfter(startTime));
     if (fromTarget < 0)
       return { fromTarget: -1, toTarget: -1, endtime: moment() };
+    const fromTime = fromEtas[fromTarget].time;
 
-    const toTarget = toEtas.findIndex((eta) => {
-      console.log("Comparing eta times:", {
-        etaTime: eta.time.format("HH:mm"),
-        thresholdTime: fromEtas[fromTarget].time
-          .add(baseDuration, "minutes")
-          .format("HH:mm"),
-        baseDuration,
-        origThresholdTime: fromEtas[fromTarget].time.format("HH:mm"),
-      });
-      return eta.time.isAfter(
-        fromEtas[fromTarget].time.add(baseDuration, "minutes")
-      );
+    // find the ETA nearest to threshold (from target time + baseDuration)
+    const thresholdTime = fromTime.clone().add(baseDuration, "minutes");
+
+    let toTarget = -1;
+    let smallestDiff = Infinity;
+    toEtas.forEach((eta, idx) => {
+      const diff = Math.abs(eta.time.diff(thresholdTime));
+      if (eta.time.isAfter(fromTime) && diff < smallestDiff) {
+        smallestDiff = diff;
+        toTarget = idx;
+      }
     });
     if (toTarget < 0) return { fromTarget, toTarget: -1, endtime: moment() };
 
     const endtime = toEtas[toTarget].time;
-    console.log("Processed segment etas:", {
-      fromTarget,
-      toTarget,
-      endtime,
-    });
     return { fromTarget, toTarget, endtime };
   }
 
