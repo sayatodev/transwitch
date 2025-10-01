@@ -1,7 +1,13 @@
 "use client";
 
 import type { SwitchOption } from "@/types/transwitch";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Paragraph } from "./Typography";
 import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { getCompanyColor } from "@/scripts/utils/styles";
@@ -32,6 +38,11 @@ export function SwitchOptionCard(props: ISwitchOptionCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>{option.name}</CardTitle>
+        <CardAction className="text-sm text-muted-foreground">
+          {controller.getTotalDuration() && (
+            <span>{controller.getTotalDuration()} min</span>
+          )}
+        </CardAction>
       </CardHeader>
       <CardContent>
         {segments.map(({ route, segment }, index) => (

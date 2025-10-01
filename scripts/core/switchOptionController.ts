@@ -55,7 +55,12 @@ export class SwitchOptionController {
     if (segmentIndex >= 0) {
       const newEtas = etas.map((etaStr) => {
         let etaMoment = moment(etaStr);
-        console.log("Parsed eta moment:", etaMoment.format("HH:mm"), "from", etaStr);
+        console.log(
+          "Parsed eta moment:",
+          etaMoment.format("HH:mm"),
+          "from",
+          etaStr
+        );
         if (etaMoment.diff(moment(), "hour") > 22) {
           // suppose this is a past eta, and not a eta of the next day
           etaMoment = etaMoment.subtract(1, "day");
@@ -185,5 +190,16 @@ export class SwitchOptionController {
 
     const targetIdx = etas.findIndex((eta) => eta.isTarget);
     return { target: targetIdx };
+  }
+
+  getTotalDuration(): number | null {
+    const start = this.segments[0].fromEtas.find((eta) => eta.isTarget);
+    if (!start) return null;
+    const end = this.segments[this.segments.length - 1].toEtas.find(
+      (eta) => eta.isTarget
+    );
+    if (!end) return null;
+    const duration = end.time.diff(start.time, "minutes");
+    return duration >= 0 ? duration : null;
   }
 }
