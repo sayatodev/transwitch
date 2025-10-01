@@ -9,9 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SwitchView() {
   const { switches } = useUserSwitches();
-  if (!switches) return <Skeleton className="h-6 w-32" />;
-
   const { id } = useParams();
+  
+  if (!switches) return <Skeleton className="h-6 w-32" />;
 
   const targetSwitch = switches.find((s) => s.id === id);
   if (!targetSwitch) return <SwitchNotFound />;
