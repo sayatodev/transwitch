@@ -4,9 +4,15 @@ import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
 import { toHHMM } from "@/scripts/utils/strings";
 import { RouteListEntry } from "hk-bus-eta";
 import { Skeleton } from "./ui/skeleton";
-import type { SwitchOptionController } from "@/scripts/core/switchOptionController";
 import { useEffect } from "react";
 import { useSWRGetEta } from "@/scripts/swrHelper";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  CrossPlatformTooltip,
+} from "./ui/tooltip";
+import { AlertCircle } from "lucide-react";
 
 interface IEtaDisplayProps {
   routeId: string;
@@ -49,18 +55,42 @@ export function EtaDisplay(props: IEtaDisplayProps) {
         {props.stopName}
       </div>
       {etas && etas.length ? (
-        etas.map((eta, index) => (
-          <div
-            key={`eta-text-${index}`}
-            className={`text-end ml-auto ${
-              props.highlightTarget === index ? "font-bold text-blue-600" : ""
-            }`}
-          >
-            {eta.eta && eta.eta.length
-              ? toHHMM(new Date(eta.eta))
-              : eta.remark.en || "N/A"}
-          </div>
-        ))
+        etas.map((eta, index) => {
+          const hasEta = eta.eta && eta.eta.length;
+          const remark = eta.remark.en;
+          const isTargetClass =
+            props.highlightTarget === index ? "font-bold text-blue-600" : "";
+          return (
+            <div
+              key={`eta-text-${index}`}
+              className={`text-end ml-auto ${isTargetClass} flex items-center justify-end gap-1`}
+            >
+              {hasEta ? (
+                remark ? (
+                  <CrossPlatformTooltip
+                    content={remark}
+                    className="translate-y-2 max-w-[80vw]"
+                  >
+                    <span className="underline decoration-dotted underline-offset-2">
+                      {toHHMM(new Date(eta.eta))}
+                    </span>
+                  </CrossPlatformTooltip>
+                ) : (
+                  <span>{toHHMM(new Date(eta.eta))}</span>
+                )
+              ) : remark ? (
+                <CrossPlatformTooltip
+                  content={remark}
+                  className="translate-y-2 max-w-[80vw]"
+                >
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                </CrossPlatformTooltip>
+              ) : (
+                <span>N/A</span>
+              )}
+            </div>
+          );
+        })
       ) : (
         <div className="text-end ml-auto">N/A</div>
       )}
