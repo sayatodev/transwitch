@@ -22,7 +22,6 @@ import {
   SwitchSchema,
   useUserSwitches,
 } from "@/scripts/contexts/userSwitches";
-import { useSWRBusEtaApi } from "@/scripts/swrHelper";
 import { toNormalCase } from "@/scripts/utils/strings";
 import { RouteSegment, SegmentSetter, Switch } from "@/types/transwitch";
 import { ArrowDownLeft, ArrowUpRight, Trash2 } from "lucide-react";

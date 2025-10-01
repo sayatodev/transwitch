@@ -58,6 +58,14 @@ export class BusEtaApi<
     return matchedRoutes.map(([id]) => id);
   }
 
+  getRouteId(route: RouteListEntry): string | null {
+    if (!this.isInitialized()) {
+      throw new Error("BusEtaApi not initialized");
+    }
+
+    return this.getRouteEntries().find(([, r]) => r === route)?.[0] ?? null;
+  }
+
   getRoute(routeId: string): RouteListEntry {
     if (!this.isInitialized()) {
       throw new Error("BusEtaApi not initialized");
@@ -85,7 +93,7 @@ export class BusEtaApi<
 
   async getEta(
     routeResolvable: string | RouteListEntry,
-    stopSeq: number
+    stopSeq: number,
   ): Promise<Eta[]> {
     if (!this.isInitialized()) {
       throw new Error("BusEtaApi not initialized");

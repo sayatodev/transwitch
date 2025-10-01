@@ -1,22 +1,32 @@
+"use client";
+
 import { useBusEtaApi } from "@/scripts/contexts/busEtaApi";
-import { useSWRBusEtaApi } from "@/scripts/swrHelper";
 import { toHHMM } from "@/scripts/utils/strings";
 import { RouteListEntry } from "hk-bus-eta";
 import { Skeleton } from "./ui/skeleton";
+import type { SwitchOptionController } from "@/scripts/core/switchOptionController";
+import { useEffect } from "react";
+import { useSWRGetEta } from "@/scripts/swrHelper";
 
 interface IEtaDisplayProps {
+  routeId: string;
   route: RouteListEntry;
   stopName?: string;
   stopSeq: number;
+  highlightTarget: number;
+  setEtas: (etas: string[]) => void;
 }
 
 export function EtaDisplay(props: IEtaDisplayProps) {
-  const { etas, error, isLoading } = useSWRBusEtaApi(
-    "getEta",
+  const { etas, error, isLoading } = useSWRGetEta(
     useBusEtaApi(),
-    props.route,
+    props.routeId,
     props.stopSeq
   );
+
+  useEffect(() => {
+    props.setEtas(etas?.map((e) => e.eta || "") || []);
+  }, [etas]);
 
   if (error) {
     console.error(error);
@@ -40,7 +50,12 @@ export function EtaDisplay(props: IEtaDisplayProps) {
       </div>
       {etas && etas.length ? (
         etas.map((eta, index) => (
-          <div key={`eta-text-${index}`} className="text-end ml-auto">
+          <div
+            key={`eta-text-${index}`}
+            className={`text-end ml-auto ${
+              props.highlightTarget === index ? "font-bold text-blue-600" : ""
+            }`}
+          >
             {eta.eta && eta.eta.length
               ? toHHMM(new Date(eta.eta))
               : eta.remark.en || "N/A"}

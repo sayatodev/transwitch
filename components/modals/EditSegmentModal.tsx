@@ -15,6 +15,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { RouteInput } from "../inputs/RouteInput";
+import { StopInput } from "../inputs/StopInput";
 
 interface EditSegmentModalProps {
   className?: string;
@@ -47,22 +48,15 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
         <RouteInput
           onChange={(value) => setFormData({ ...formData, routeId: value })}
         />
-        <Label className="mt-4">From Stop number</Label>
-        <Input
-          type="number"
-          defaultValue={formData.fromSeq + 1}
-          onChange={(e) => {
-            setFormData({ ...formData, fromSeq: Number(e.target.value) - 1 });
-          }}
+        <Label className="mt-4">From Stop</Label>
+        <StopInput
+          routeId={formData.routeId}
+          onChange={(seq) => setFormData({ ...formData, fromSeq: seq })}
         />
-        <Label className="mt-4">To Stop number</Label>
-        <Input
-          type="number"
-          defaultValue={formData.toSeq + 1}
-          min={1}
-          onChange={(e) => {
-            setFormData({ ...formData, toSeq: Number(e.target.value) - 1 });
-          }}
+        <Label className="mt-4">To Stop</Label>
+        <StopInput
+          routeId={formData.routeId}
+          onChange={(seq) => setFormData({ ...formData, toSeq: seq })}
         />
         <div className="mb-2">
           <Label className="mt-4">Base Duration (minutes)</Label>
