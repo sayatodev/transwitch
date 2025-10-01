@@ -63,7 +63,7 @@ const VirtualizedCommand = ({
     setIsKeyboardNavActive(false);
     setFilteredOptions(
       options.filter((option) =>
-        option.value.toLowerCase().includes(search.toLowerCase() ?? [])
+        option.label.toLowerCase().includes(search.toLowerCase() ?? [])
       )
     );
   };
@@ -242,6 +242,7 @@ interface VirtualizedComboboxProps {
   options: ComboboxCommandOption[];
   searchPlaceholder?: string;
   className?: string;
+  value?: string;
   onChange: (value: string) => void;
 }
 
@@ -249,10 +250,18 @@ export function VirtualizedCombobox({
   options,
   searchPlaceholder = "Search items...",
   className = undefined,
+  value,
   onChange,
 }: VirtualizedComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const [selectedOption, setSelectedOption] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState(value || "");
+
+  // Sync internal state with controlled value prop
+  React.useEffect(() => {
+    if (value !== undefined) {
+      setSelectedOption(value);
+    }
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

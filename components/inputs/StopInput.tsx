@@ -8,10 +8,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 type StopInputProps = {
   routeId: string;
+  value?: number;
   onChange: (sequence: number) => void;
 };
 
-export function StopInput({ routeId, onChange }: StopInputProps) {
+export function StopInput({ routeId, value, onChange }: StopInputProps) {
   const busEtaApi = useBusEtaApi();
   
   if (!routeId) {
@@ -55,6 +56,7 @@ export function StopInput({ routeId, onChange }: StopInputProps) {
     <div className="w-full min-w-0">
       <VirtualizedCombobox
         options={options}
+        value={value !== undefined ? value.toString() : undefined}
         className="w-full min-w-0 [&>*]:min-w-0"
         searchPlaceholder="Search stop..."
         onChange={handleChange}

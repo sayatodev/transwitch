@@ -46,16 +46,19 @@ export function EditSegmentModalTrigger(props: EditSegmentModalProps) {
         </DialogHeader>
         <Label className="mt-4">Route</Label>
         <RouteInput
+          value={formData.routeId}
           onChange={(value) => setFormData({ ...formData, routeId: value })}
         />
         <Label className="mt-4">From Stop</Label>
         <StopInput
           routeId={formData.routeId}
+          value={formData.fromSeq}
           onChange={(seq) => setFormData({ ...formData, fromSeq: seq })}
         />
         <Label className="mt-4">To Stop</Label>
         <StopInput
           routeId={formData.routeId}
+          value={formData.toSeq}
           onChange={(seq) => setFormData({ ...formData, toSeq: seq })}
         />
         <div className="mb-2">

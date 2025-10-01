@@ -8,10 +8,11 @@ import { RouteListEntry } from "hk-bus-eta";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type RouteInputProps = {
+  value?: string;
   onChange: (value: string) => void;
 };
 
-export function RouteInput({ onChange }: RouteInputProps) {
+export function RouteInput({ value, onChange }: RouteInputProps) {
   const busEtaApi = useBusEtaApi();
   
   const options = busEtaApi.getRouteEntries().map<ComboboxCommandOption>(([id, route]: [string, RouteListEntry]) => {
@@ -27,6 +28,7 @@ export function RouteInput({ onChange }: RouteInputProps) {
     <div className="w-full min-w-0">
       <VirtualizedCombobox
         options={options}
+        value={value}
         className="w-full min-w-0 [&>*]:min-w-0"
         searchPlaceholder="Search route..."
         onChange={onChange}
