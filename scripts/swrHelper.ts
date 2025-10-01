@@ -1,4 +1,4 @@
-import useSWR, { type Fetcher } from "swr";
+import useSWR, { SWRConfiguration, type Fetcher } from "swr";
 import type { BusEtaApi } from "./apis/busEta";
 import type { useBusEtaApi } from "./contexts/busEtaApi";
 import type { Eta } from "hk-bus-eta";
@@ -30,8 +30,10 @@ type BusEtaApiSWRFetcherArgs<K extends BusEtaApiFetchKey> = [
   ...BusEtaApiFetchArgs<K>
 ];
 
-export const busEtaApiInitFetcher: BusEtaApiSWRFetcher<"initDb"> = ([api]) =>
-  api.init();
+export const busEtaApiInitFetcher: BusEtaApiSWRFetcher<"initDb"> = ([api]) => {
+  if (api.isInitialized()) return Promise.resolve(api);
+  return api.init();
+};
 export const busEtaApiEtasFetcher: BusEtaApiSWRFetcher<"getEta"> = ([
   api,
   ...args
@@ -58,18 +60,27 @@ export function useSWRBusEtaApi<K extends BusEtaApiFetchKey>(
   api: BusEtaApi,
   ...args: BusEtaApiFetchArgs<K>
 ): any & SWRBusEtaApiReturnBase {
-  const fetcher = (
-    key === "initDb"
-      ? busEtaApiInitFetcher
-      : key === "getEta"
-      ? busEtaApiEtasFetcher
-      : null
-  ) as BusEtaApiSWRFetcher<K>;
+  let fetcher: BusEtaApiSWRFetcher<K> | null = null;
+  const config: SWRConfiguration = {}
+  switch (key) {
+    case "initDb":
+      fetcher = busEtaApiInitFetcher as BusEtaApiSWRFetcher<K>;
+      config.revalidateIfStale = false;
+      config.revalidateOnFocus = false;
+      config.revalidateOnReconnect = false;
+      break;
+    case "getEta":
+      fetcher = busEtaApiEtasFetcher as BusEtaApiSWRFetcher<K>;
+      break;
+    default:
+      fetcher = null;
+  }
   if (!fetcher) throw new Error(`Unsupported key: ${key}`);
 
   const { data, error, isLoading } = useSWR(
     [api, ...args] as BusEtaApiSWRFetcherArgs<K>,
-    fetcher
+    fetcher,
+    config
   );
   const resultsBase = {
     error,
